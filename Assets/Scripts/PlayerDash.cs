@@ -5,6 +5,8 @@ public class PlayerDash : MonoBehaviour
     public float dashSpeed = 15f;    // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash
     public float dashCooldown = 1f;  // Tiempo de espera entre dashes
+    public float objectOffset = 1.5f; // Distancia del objeto al jugador
+    public float dashDetectionRadius = 1.5f;  // Radio de detección para romper paredes
 
     private CharacterController controller;
     private bool isDashing = false;
@@ -25,13 +27,13 @@ public class PlayerDash : MonoBehaviour
 
     void Update()
     {
-        if (controller == null || !canDash) return; //No puede hacer dash sin objeto
+        if (controller == null) return;
 
         // Capturar movimiento del personaje (de otro script)
         Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
         // DASH: Si se presiona ESPACIO y hay cooldown disponible
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > lastDashTime + dashCooldown && moveDirection.magnitude > 0.1f)
+        if (canDash && Input.GetKeyDown(KeyCode.Space) && Time.time > lastDashTime + dashCooldown && moveDirection.magnitude > 0.1f)
         {
             isDashing = true;
             dashTime = Time.time + dashDuration;
@@ -43,21 +45,31 @@ public class PlayerDash : MonoBehaviour
         if (isDashing)
         {
             controller.Move(dashDirection * dashSpeed * Time.deltaTime);
-            if (carriedObject != null)
+
+            // Detectar colisiones mientras haces dash
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, dashDetectionRadius);
+            foreach (Collider collider in hitColliders)
             {
-                carriedObject.position = transform.position + transform.forward * 1.5f; // Mantener el objeto en frente
+                if (collider.CompareTag("BreakableWall"))
+                {
+                    Destroy(collider.gameObject);  // Rompe la pared
+                    Debug.Log("Pared rota con el dash!");
+                }
             }
 
+            // Termina el dash
             if (Time.time >= dashTime)
             {
-                isDashing = false; // Termina el dash
+                isDashing = false;
             }
         }
 
-        // Si lleva un objeto, actualizar su posición cerca del jugador
-        if (carriedObject != null && !isDashing)
+        // Si lleva un objeto, actualizar su posición enfrente del jugador y mantenerlo recto
+        if (carriedObject != null)
         {
-            carriedObject.position = transform.position + transform.forward * 1f;
+            Vector3 objectPosition = transform.position + transform.forward * objectOffset;
+            carriedObject.position = objectPosition;
+            carriedObject.rotation = Quaternion.identity; // Mantiene el objeto recto (sin rotación)
         }
     }
 
@@ -65,10 +77,7 @@ public class PlayerDash : MonoBehaviour
     public void PickUpObject(Transform obj)
     {
         carriedObject = obj;
-        carriedObject.SetParent(transform); // Hace que el objeto siga al jugador
         canDash = true; // Habilitar dash
+        Debug.Log("Objeto recogido y dash habilitado");
     }
-
 }
-
-
