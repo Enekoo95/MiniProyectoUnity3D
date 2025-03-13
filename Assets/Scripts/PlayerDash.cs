@@ -5,8 +5,8 @@ public class PlayerDash : MonoBehaviour
     public float dashSpeed = 15f;    // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash
     public float dashCooldown = 1f;  // Tiempo de espera entre dashes
-    public float objectOffset = 1.5f; // Distancia del objeto al jugador
-    public float dashDetectionRadius = 1.5f;  // Radio de detección para romper paredes
+    public float objectOffset = 0.5f; // Distancia del objeto al jugador
+    public float dashDetectionRadius = 1f;  // Radio de detección para romper paredes
 
     private CharacterController controller;
     private bool isDashing = false;
@@ -29,7 +29,7 @@ public class PlayerDash : MonoBehaviour
     {
         if (controller == null) return;
 
-        // Capturar movimiento del personaje (de otro script)
+        // Capturar movimiento del personaje
         Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
         // DASH: Si se presiona ESPACIO y hay cooldown disponible
