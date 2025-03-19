@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 287079541379485091}
   - component: {fileID: 6428089326986712552}
   m_Layer: 0
-  m_Name: SM_Wep_Rapier_01
+  m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

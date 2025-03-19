@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5016484007750952665}
   - component: {fileID: 7253008557917873344}
   m_Layer: 0
-  m_Name: SM_Env_Wall_DoorFrame_Double_01
+  m_Name: DoorWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
