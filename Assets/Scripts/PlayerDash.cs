@@ -5,9 +5,9 @@ public class PlayerDash : MonoBehaviour
     public float dashSpeed = 15f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
-    public float objectOffset = 1.5f;
-    public float dashDetectionRadius = 1.5f;
-    public int dashDamage = 50;
+    public float objectOffset = 0.5f;
+    public float dashDetectionRadius = 1f;
+    public int dashDamage = 10;
 
     private CharacterController controller;
     private bool isDashing = false;
@@ -33,15 +33,13 @@ public class PlayerDash : MonoBehaviour
     {
         if (controller == null) return;
 
-        Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
         // Iniciar Dash
-        if (canDash && Input.GetKeyDown(KeyCode.Space) && Time.time > lastDashTime + dashCooldown && moveDirection.magnitude > 0.1f)
+        if (canDash && Input.GetKeyDown(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
         {
             isDashing = true;
             dashTime = Time.time + dashDuration;
             lastDashTime = Time.time;
-            dashDirection = moveDirection.normalized;
+            dashDirection = transform.forward.normalized;  // Dash hacia adelante donde mira el jugador
 
             // Cambiar la capa a "DashingPlayer"
             gameObject.layer = LayerMask.NameToLayer("DashingPlayer");
@@ -100,3 +98,4 @@ public class PlayerDash : MonoBehaviour
         Debug.Log("Objeto recogido y dash habilitado");
     }
 }
+

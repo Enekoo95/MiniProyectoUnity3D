@@ -1,43 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     public float speed = 5f;
-    public float rotationSpeed = 10f;
-    public float gravity = 9.81f;
+    public float mouseSensitivity = 2f;
+    public Transform cameraTransform;
+    public float gravity = 
+        9.81f;
 
     private CharacterController controller;
     private Vector3 velocity;
+    private float verticalRotation = 0f;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-
-        if (controller == null)
-        {
-            Debug.LogError("No se encontró un CharacterController en " + gameObject.name);
-        }
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        if (controller == null) return;
+        HandleMovement();
+        HandleMouseLook();
+        ApplyGravity();
+    }
 
-        // Capturar entrada de teclas (WASD o Flechas)
-        float moveX = Input.GetAxis("Horizontal"); // A/D o Izq/Der
-        float moveZ = Input.GetAxis("Vertical");   // W/S o Arriba/Abajo
+    void HandleMovement()
+    {
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
+        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        controller.Move(move * speed * Time.deltaTime);
+    }
 
-        // Vector de movimiento
-        Vector3 move = new Vector3(moveX, 0, moveZ);
+    void HandleMouseLook()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        // Si hay movimiento, girar hacia la dirección en la que se mueve
-        if (move.magnitude > 0.1f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(move);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
+        verticalRotation -= mouseY;
+        verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
+
+        cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        transform.Rotate(Vector3.up * mouseX);
+    }
+
+    void ApplyGravity()
+    {
+        bool isGrounded = controller.isGrounded || Physics.Raycast(transform.position, Vector3.down, controller.height / 2 + 0.1f);
+
+
 
         // Aplicar gravedad
         if (!controller.isGrounded)
@@ -49,8 +61,11 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f; // Pequeño empuje para mantener contacto con el suelo
         }
 
-        // Mover personaje
-        controller.Move((move * speed + velocity) * Time.deltaTime);
+        if (velocity.y > 0 && !isGrounded)
+        {
+            velocity.y = 0f; // Evita que se acumule velocidad positiva al caer
+        }
+
+        controller.Move(velocity * Time.deltaTime);
     }
 }
-
