@@ -5,8 +5,8 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f;
     public float mouseSensitivity = 2f;
     public Transform cameraTransform;
-    public float gravity = 
-        9.81f;
+    public float gravity = 9.81f;
+
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -36,9 +36,8 @@ public class PlayerController : MonoBehaviour
     void HandleMouseLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        verticalRotation -= mouseY;
+
         verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
 
         cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
