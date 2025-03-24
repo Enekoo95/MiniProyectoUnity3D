@@ -2,14 +2,22 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public int health = 100;
+    public int maxHealth = 3;
+    public int dashesToKill = 3;
+    private int currentHealth;
 
-    public void TakeDamage(int damage)
+    void Start()
     {
-        health -= damage;
-        Debug.Log("Enemigo recibió " + damage + " de daño. Vida restante: " + health);
+        currentHealth = maxHealth;
+    }
 
-        if (health <= 0)
+    public void TakeDamageFromDash()
+    {
+        int dashDamage = maxHealth / dashesToKill;
+        currentHealth -= dashDamage;
+        Debug.Log("Enemigo recibió " + dashDamage + " de daño. Vida restante: " + currentHealth);
+
+        if (currentHealth <= 0)
         {
             Die();
         }

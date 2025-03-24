@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerDash : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class PlayerDash : MonoBehaviour
     private Vector3 dashDirection;
     private Transform carriedObject;
     private int defaultLayer;  // Guarda la capa original
+    private HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
 
     void Start()
     {
@@ -61,15 +63,25 @@ public class PlayerDash : MonoBehaviour
                     Debug.Log("Pared rota con el dash!");
                 }
 
-                // Dañar enemigos
+
+                // Dentro del foreach que detecta colisiones en el dash:
                 if (collider.CompareTag("Enemy"))
                 {
                     Enemy enemy = collider.GetComponent<Enemy>();
-                    if (enemy != null)
+                    if (enemy != null && !hitEnemies.Contains(enemy))
                     {
-                        enemy.TakeDamage(dashDamage);
+                        enemy.TakeDamageFromDash();
+                        hitEnemies.Add(enemy);  // Marca a este enemigo como golpeado en este dash
                         Debug.Log("Enemigo golpeado con el dash!");
                     }
+                }
+
+                // Al terminar el dash, limpia la lista:
+                if (Time.time >= dashTime)
+                {
+                    isDashing = false;
+                    gameObject.layer = defaultLayer;
+                    hitEnemies.Clear();  // Limpia la lista para el próximo dash
                 }
             }
 
