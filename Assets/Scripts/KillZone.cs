@@ -11,5 +11,10 @@ public class KillZone : MonoBehaviour
             Destroy(other.gameObject);
             Debug.Log("¡Jugador ha caído en la piscina y ha muerto!");
         }
+        if (other.CompareTag("Enemy"))
+        {
+            Destroy(other.gameObject);
+            Debug.Log("¡Enemigo ha caído en la piscina y ha muerto!");
+        }
     }
 }

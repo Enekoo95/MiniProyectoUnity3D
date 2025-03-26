@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    public Transform player;            // Asigna el jugador desde el inspector
-    public float speed = 3f;            // Velocidad de movimiento
-    public float detectionRange = 15f;  // Rango de visión
+    public Transform player;  // Asigna el jugador desde el inspector
+    public float speed = 3f;  // Velocidad de movimiento
+    public float detectionRange = 100000f;  // Rango de visión
     public float visionAngle = 60f;     // Ángulo de visión
     public LayerMask obstacleMask;      // Capa de obstáculos
     private bool isChasing = false;     // Solo persigue después de verte
-
     void Update()
     {
         if (!isChasing && CanSeePlayer())
@@ -22,7 +21,6 @@ public class EnemyMovement : MonoBehaviour
             ChasePlayer();
         }
     }
-
     void ChasePlayer()
     {
         if (player == null) return;
