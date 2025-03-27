@@ -36,8 +36,9 @@ public class PlayerController : MonoBehaviour
     void HandleMouseLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-
+        verticalRotation -= mouseY; // Subtract because mouse movement is inverted
         verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
 
         cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
