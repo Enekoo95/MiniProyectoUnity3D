@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private float verticalRotation = 0f;
+    private bool isDead = false;
 
     void Start()
     {
@@ -67,5 +68,19 @@ public class PlayerController : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
+    }
+    void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+        Debug.Log("¡El jugador ha muerto!");
+        GetComponent<PlayerController>().enabled = false;
+        GetComponent<CharacterController>().enabled = false;
+        gameObject.SetActive(false);  // Desactivar el objeto 
+        Invoke("RestartLevel", 2f);
+    }
+    void RestartLevel()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }

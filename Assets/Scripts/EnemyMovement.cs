@@ -8,8 +8,23 @@ public class EnemyMovement : MonoBehaviour
     public float visionAngle = 60f;     // Ángulo de visión
     public LayerMask obstacleMask;      // Capa de obstáculos
     private bool isChasing = false;     // Solo persigue después de verte
+
+
     void Update()
     {
+        // Si el enemigo está en pausa, no hace nada
+        Enemy enemyScript = GetComponent<Enemy>();
+        // Aquí obtenemos la referencia al componente PlayerHealth
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+
+
+        // Verificar si el jugador está muerto
+        if (playerHealth != null && playerHealth.currentHealth <= 0)
+        {
+            isChasing = false;
+            return;
+        }
+
         if (!isChasing && CanSeePlayer())
         {
             isChasing = true;
@@ -27,12 +42,17 @@ public class EnemyMovement : MonoBehaviour
 
         // Calcula la dirección hacia el jugador
         Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;  // Evitar que el enemigo se incline hacia adelante/atrás
 
         // Mueve al enemigo hacia el jugador
         transform.position += direction * speed * Time.deltaTime;
 
-        // Rotar para mirar al jugador
-        transform.LookAt(player);
+        // Rotar solo en el eje Y
+        if (direction != Vector3.zero)  // Evita errores al intentar rotar hacia el vector cero
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
     }
 
     bool CanSeePlayer()
@@ -58,4 +78,5 @@ public class EnemyMovement : MonoBehaviour
 
         return true;
     }
+
 }
