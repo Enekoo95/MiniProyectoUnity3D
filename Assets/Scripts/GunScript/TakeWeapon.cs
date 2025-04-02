@@ -6,6 +6,7 @@ public class TakeWeapon : MonoBehaviour
     public GameObject crosshairUI;   // Imagen de la mira en el HUD
     public Transform playerCamera;   // Cámara del jugador
 
+
     private bool isEquipped = false;
 
     private void OnTriggerEnter(Collider other)
@@ -43,6 +44,20 @@ public class TakeWeapon : MonoBehaviour
             {
                 Debug.LogWarning("No se encontró el script 'Gun' en el objeto del arma.");
             }
+
+            // Equipar el arma llamando al script WeaponSwitcher
+            WeaponSwitcher weaponSwitcher = other.GetComponent<WeaponSwitcher>();
+            if (weaponSwitcher != null)
+            {
+                weaponSwitcher.PickUpWeapon(gameObject);
+                isEquipped = true;
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning("El jugador no tiene el componente WeaponSwitcher.");
+            }
+            Debug.Log("Arma recogida: " + gameObject.name);
         }
     }
 

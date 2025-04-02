@@ -3,25 +3,28 @@ using UnityEngine;
 public class WeaponSwitcher : MonoBehaviour
 {
     public GameObject dash; // Arma 1
-    public GameObject gun; // Arma 2
+    public GameObject gun;  // Arma 2
     private GameObject currentWeapon; // Arma actual
 
     void Start()
     {
-        // Inicializamos con el arma 1 activa
-        EquipWeapon(dash);
+        // Inicializar el arma 1 si está disponible
+        if (dash != null)
+        {
+            EquipWeapon(dash);
+        }
     }
 
     void Update()
     {
         // Cambiar a arma 1 cuando presionamos la tecla 1
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) && dash != null)
         {
             EquipWeapon(dash);
         }
 
         // Cambiar a arma 2 cuando presionamos la tecla 2
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2) && gun != null)
         {
             EquipWeapon(gun);
         }
@@ -46,11 +49,13 @@ public class WeaponSwitcher : MonoBehaviour
         if (dash == null)
         {
             dash = weapon;
-            EquipWeapon(dash); // Equipamos el primer arma
+            EquipWeapon(dash); // Equipamos el primer arma directamente
         }
         else if (gun == null)
         {
             gun = weapon;
+            gun.SetActive(false); // Desactivamos el arma recogida
+            Debug.Log("Desactivo");
         }
     }
 }
