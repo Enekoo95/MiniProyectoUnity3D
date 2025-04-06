@@ -9,6 +9,7 @@ TagManager:
   - PickUp
   - Obstacles
   - Bullet
+  - SpecialArea
   layers:
   - Default
   - TransparentFX

@@ -2,23 +2,35 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    public Transform player;  // Asigna el jugador desde el inspector
-    public float speed = 3f;  // Velocidad de movimiento
-    public float detectionRange = 100000f;  // Rango de visión
-    public float visionAngle = 60f;     // Ángulo de visión
-    public LayerMask obstacleMask;      // Capa de obstáculos
-    private bool isChasing = false;     // Solo persigue después de verte
+    public Transform player;
+    public float speed = 30f;
+    public float detectionRange = 100000f;
+    public float visionAngle = 60f;
+    public LayerMask obstacleMask;
 
+
+    private bool isChasing = false;
+    private Animator animator;
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     void Update()
     {
-        // Si el enemigo está en pausa, no hace nada
+        animator.SetBool("isChasing", isChasing);
+
+        // Logica enemigo
+
         Enemy enemyScript = GetComponent<Enemy>();
-        // Aquí obtenemos la referencia al componente PlayerHealth
         PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
 
+        if (enemyScript != null && enemyScript.enabled && enemyScript.isPaused)
+        {
+            return;
+        }
 
-        // Verificar si el jugador está muerto
         if (playerHealth != null && playerHealth.currentHealth <= 0)
         {
             isChasing = false;
@@ -36,19 +48,17 @@ public class EnemyMovement : MonoBehaviour
             ChasePlayer();
         }
     }
+
     void ChasePlayer()
     {
         if (player == null) return;
 
-        // Calcula la dirección hacia el jugador
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0;  // Evitar que el enemigo se incline hacia adelante/atrás
+        direction.y = 0;
 
-        // Mueve al enemigo hacia el jugador
         transform.position += direction * speed * Time.deltaTime;
 
-        // Rotar solo en el eje Y
-        if (direction != Vector3.zero)  // Evita errores al intentar rotar hacia el vector cero
+        if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
@@ -59,24 +69,18 @@ public class EnemyMovement : MonoBehaviour
     {
         if (player == null) return false;
 
-        // Comprobar si el jugador está dentro del rango
-        Vector3 directionToPlayer = (player.position - transform.position);
+        Vector3 directionToPlayer = player.position - transform.position;
         if (directionToPlayer.magnitude > detectionRange) return false;
 
-        // Comprobar si el jugador está dentro del ángulo de visión
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
         if (angleToPlayer > visionAngle / 2f) return false;
 
-        // Comprobar si hay obstáculos entre el enemigo y el jugador
         if (Physics.Raycast(transform.position, directionToPlayer.normalized, out RaycastHit hit, detectionRange, obstacleMask))
         {
             if (!hit.collider.CompareTag("Player"))
-            {
-                return false;  // Algo bloquea la visión
-            }
+                return false;
         }
 
         return true;
     }
-
 }

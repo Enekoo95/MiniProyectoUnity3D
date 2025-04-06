@@ -9,13 +9,17 @@ public class Enemy : MonoBehaviour
     public float health = 50;
     public int damageAmount = 10;
     public float hitPauseTime = 1f; // Tiempo de pausa después de hacer daño
+    private Animator animator;
 
-    private bool isPaused = false; // Para controlar si está en pausa
+    public bool isPaused = false; // Para controlar si está en pausa
 
     void Start()
     {
         currentHealth = maxHealth;
+        animator = GetComponent<Animator>();
     }
+
+
 
     public void TakeDamage(int damage)
     {
