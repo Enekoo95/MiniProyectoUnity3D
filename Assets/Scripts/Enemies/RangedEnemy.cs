@@ -2,55 +2,70 @@ using UnityEngine;
 
 public class RangedEnemy : MonoBehaviour
 {
-    public Transform player;
     public GameObject projectilePrefab;
     public Transform shootPoint;
-    public float shootCooldown = 2f;
-    public float detectionRange = 10f;
+    public Transform player;
+    public float shootForce = 20f;
+    public float attackCooldown = 2f;
+    public float attackRange = 10f;
 
-    private float lastShootTime;
+    private float lastAttackTime = 0f;
 
     void Update()
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Comprobar si el jugador está en rango
-        if (distance <= detectionRange)
+        if (distanceToPlayer <= attackRange)
         {
-            // Si ha pasado suficiente tiempo, lanzar el proyectil
-            if (Time.time >= lastShootTime + shootCooldown)
+            FacePlayer();
+
+            if (Time.time - lastAttackTime > attackCooldown)
             {
                 Shoot();
-                lastShootTime = Time.time;
+                lastAttackTime = Time.time;
             }
         }
     }
 
     void Shoot()
     {
-        // Instanciamos la lanza sin rotación especial
+        Debug.Log("Disparando proyectil...");
+
         GameObject projectile = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
-        // Escalamos la lanza (ajústalo si sigue siendo muy grande o pequeña)
-        projectile.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+        // Escalamos correctamente la lanza
+        projectile.transform.localScale = new Vector3(1, 1, 1); // Ajusta si lo necesitas
 
-        // Calculamos la dirección hacia el jugador
+        // Direcciona hacia el jugador
         Vector3 direction = (player.position - shootPoint.position).normalized;
 
-        // Rotamos la lanza para que mire hacia el jugador
-        projectile.transform.rotation = Quaternion.LookRotation(direction);
+        // Rotamos el proyectil para que apunte correctamente
+        projectile.transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0);
 
-        // Aplicamos la velocidad hacia el jugador
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.velocity = direction * 10f; // Puedes ajustar la velocidad aquí
+            rb.velocity = direction * shootForce;
         }
-
-        // Destruir la lanza después de 5 segundos
-        Destroy(projectile, 5f);
+        else
+        {
+            Debug.LogWarning("El proyectil no tiene Rigidbody");
+        }
     }
+
+    void FacePlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+    }
+
 }
 

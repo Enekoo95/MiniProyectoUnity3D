@@ -60,7 +60,7 @@ public class Enemy : MonoBehaviour
                 playerHealth.TakeDamage(damageAmount);
                 Debug.Log("El enemigo hizo " + damageAmount + " de daño al jugador.");
 
-                // Opcional: Añadir un pequeño empuje hacia atrás
+                // Añadir un pequeño empuje hacia atrás
                 Vector3 knockbackDirection = (other.transform.position - transform.position).normalized;
                 CharacterController playerController = other.GetComponent<CharacterController>();
                 if (playerController != null)

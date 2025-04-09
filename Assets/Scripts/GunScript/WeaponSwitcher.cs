@@ -8,7 +8,7 @@ public class WeaponSwitcher : MonoBehaviour
 
     void Start()
     {
-        // Inicializar el arma 1 si está disponible
+        // Inicializa el arma 1 si está disponible
         if (dash != null)
         {
             EquipWeapon(dash);
@@ -17,14 +17,14 @@ public class WeaponSwitcher : MonoBehaviour
 
     void Update()
     {
-        // Cambiar a arma 1 cuando presionamos la tecla 1
-        if (Input.GetKeyDown(KeyCode.Alpha1) && dash != null)
+        // Cambiar a arma 1 cuando presionamos la tecla 1 y si el arma está equipada
+        if (Input.GetKeyDown(KeyCode.Alpha1) && dash != null && currentWeapon != dash)
         {
             EquipWeapon(dash);
         }
 
-        // Cambiar a arma 2 cuando presionamos la tecla 2
-        if (Input.GetKeyDown(KeyCode.Alpha2) && gun != null)
+        // Cambiar a arma 2 cuando presionamos la tecla 2 y si el arma está equipada
+        if (Input.GetKeyDown(KeyCode.Alpha2) && gun != null && currentWeapon != gun)
         {
             EquipWeapon(gun);
         }
@@ -50,12 +50,17 @@ public class WeaponSwitcher : MonoBehaviour
         {
             dash = weapon;
             EquipWeapon(dash); // Equipamos el primer arma directamente
+            Debug.Log("Arma 1 recogida: " + dash.name);
         }
+        // Si el arma 2 no está equipada, asignarla a esa ranura
         else if (gun == null)
         {
             gun = weapon;
-            gun.SetActive(false); // Desactivamos el arma recogida
-            Debug.Log("Desactivo");
+            Debug.Log("Arma 2 recogida: " + gun.name);
+        }
+        else
+        {
+            Debug.Log("Ya tienes las dos armas.");
         }
     }
 }
