@@ -10,6 +10,7 @@ TagManager:
   - Obstacles
   - Bullet
   - SpecialArea
+  - Suelo
   layers:
   - Default
   - TransparentFX

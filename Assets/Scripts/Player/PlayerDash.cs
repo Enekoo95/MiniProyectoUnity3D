@@ -114,4 +114,16 @@ public class PlayerDash : MonoBehaviour
         canDash = true;
         Debug.Log("Objeto recogido y dash habilitado");
     }
+
+    public void EnableDash(bool enabled)
+    {
+        canDash = enabled;
+        if (!enabled)
+        {
+            isDashing = false;
+            chargeTime = 0f;
+        }
+
+        Debug.Log("Dash " + (enabled ? "habilitado" : "deshabilitado"));
+    }
 }

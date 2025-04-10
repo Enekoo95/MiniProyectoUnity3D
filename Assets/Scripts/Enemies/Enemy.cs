@@ -86,4 +86,6 @@ public class Enemy : MonoBehaviour
         isPaused = false;
         Debug.Log("El enemigo vuelve a perseguir.");
     }
+
+
 }

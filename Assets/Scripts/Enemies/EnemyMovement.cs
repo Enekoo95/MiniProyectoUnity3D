@@ -8,6 +8,7 @@ public class EnemyMovement : MonoBehaviour
     public float visionAngle = 60f;
     public LayerMask obstacleMask;
 
+    public float attackRange = 1f;
 
     private bool isChasing = false;
     private Animator animator;
@@ -20,6 +21,15 @@ public class EnemyMovement : MonoBehaviour
     void Update()
     {
         animator.SetBool("isChasing", isChasing);
+
+        if (player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (isChasing && distance <= attackRange)
+        {
+            animator.SetTrigger("attack");
+        }
 
         // Logica enemigo
 
