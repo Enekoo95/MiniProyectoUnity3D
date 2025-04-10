@@ -32,15 +32,13 @@ public class DistanceEnemyHealth : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-
-        // Si lo que chocó es una bala
-        if (other.CompareTag("Bullet"))
+        Bullet bullet = collision.gameObject.GetComponent<Bullet>();
+        if (bullet != null)
         {
-            TakeDamage(1);
-            Destroy(other.gameObject); // Destruir la bala
+            TakeDamage(bullet.damage);
+            Destroy(collision.gameObject);
         }
-
     }
 }

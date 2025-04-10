@@ -639,7 +639,7 @@ GameObject:
   - component: {fileID: 1330773589337048388}
   m_Layer: 0
   m_Name: Character_Soldier_01_Black
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
