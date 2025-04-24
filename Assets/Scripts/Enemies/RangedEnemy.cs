@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class RangedEnemy : MonoBehaviour
 {
-    public GameObject projectilePrefab; // Prefab del proyectil
-    public Transform shootPoint;        // Punto desde donde dispara
-    public Transform player;            // Referencia al jugador
-    public float shootForce = 10f;      // Fuerza del proyectil (ajustar para controlar la velocidad)
-    public float attackCooldown = 2f;   // Tiempo entre disparos
-    public float attackRange = 10f;     // Rango del ataque
+    public GameObject projectilePrefab;
+    public Transform shootPoint;
+    public Transform player;
+    public float shootForce = 20f;
+    public float attackCooldown = 2f;
+    public float attackRange = 10f;
+    public float attackDelay = 0.5f; // Tiempo de espera antes de disparar
 
-    private float lastAttackTime = 0f;  // Última vez que se disparó
-    private Animator animator;          // Referencia al Animator del enemigo
+    private float lastAttackTime = 0f;
+    private Animator animator;
 
     void Start()
     {
-        // Obtenemos el componente Animator
         animator = GetComponent<Animator>();
         if (animator == null)
         {
@@ -26,59 +26,54 @@ public class RangedEnemy : MonoBehaviour
     {
         if (player == null) return;
 
-        // Calculamos la distancia entre el enemigo y el jugador
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Si el jugador está dentro del rango de ataque
         if (distanceToPlayer <= attackRange)
         {
-            FacePlayer(); // Miramos al jugador
+            FacePlayer();
 
-            // Comprobamos si ha pasado suficiente tiempo desde el último disparo
             if (Time.time - lastAttackTime > attackCooldown)
             {
-                // Activamos la animación de ataque antes de disparar
                 animator.SetBool("IsAttacking", true);
 
-                // Disparamos
-                Shoot();
+                // Espera un momento antes de disparar
+                Invoke(nameof(Shoot), attackDelay);
 
-                // Actualizamos el tiempo del último ataque
-                lastAttackTime = Time.time;
+                lastAttackTime = Time.time + attackDelay;
 
-                // Volver a la animación Idle después de un retraso (sin interrumpir el disparo)
-                Invoke("ReturnToIdle", 0.5f); // Ajusta el tiempo según la duración de la animación de ataque
+                Invoke(nameof(ReturnToIdle), 1f); // Ajusta según tu animación
             }
         }
         else
         {
-            // Si el jugador no está en el rango de ataque, volvemos al estado Idle
             animator.SetBool("IsAttacking", false);
         }
     }
 
     void Shoot()
     {
-        // Creamos el proyectil
         Debug.Log("Disparando proyectil...");
 
         GameObject projectile = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
-        // Ajustamos la escala del proyectil si es necesario
-        projectile.transform.localScale = new Vector3(1, 1, 1); // Ajusta según sea necesario
+        Physics.IgnoreCollision(projectile.GetComponent<Collider>(), GetComponent<Collider>());
 
-        // Calculamos la dirección hacia el jugador
-        Vector3 direction = (player.position - shootPoint.position).normalized;
+        projectile.transform.localScale = new Vector3(1, 1, 1);
 
-        // Rotamos el proyectil para que apunte correctamente hacia el jugador
-        projectile.transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0);
+        // Dirección hacia el jugador con más inclinación hacia abajo
+        Vector3 toPlayer = (player.position - shootPoint.position).normalized;
 
-        // Aseguramos que el proyectil tiene un Rigidbody para moverse
+        // Añadimos una inclinación vertical manual
+        Vector3 launchDirection = (toPlayer + Vector3.up * 0.1f).normalized;
+
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            // Aplicamos la fuerza ajustada, controlando la velocidad final
-            rb.velocity = direction * shootForce;  // Aquí usamos la shootForce como la velocidad final
+            rb.useGravity = true;
+
+            float adjustedForce = shootForce * 1.2f; // Puedes subir esto si se queda corto
+            rb.AddForce(launchDirection * adjustedForce, ForceMode.Impulse);
         }
         else
         {
@@ -88,9 +83,8 @@ public class RangedEnemy : MonoBehaviour
 
     void FacePlayer()
     {
-        // Hacemos que el enemigo mire al jugador
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0; // Ignoramos la altura para que no se incline
+        direction.y = 0;
 
         if (direction != Vector3.zero)
         {
@@ -99,9 +93,8 @@ public class RangedEnemy : MonoBehaviour
         }
     }
 
-    // Método para regresar a la animación Idle
     void ReturnToIdle()
     {
-        animator.SetBool("IsAttacking", false); // Regresamos al estado Idle
+        animator.SetBool("IsAttacking", false);
     }
 }
