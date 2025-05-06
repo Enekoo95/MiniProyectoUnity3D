@@ -28,11 +28,12 @@ public class EnemyMovement : MonoBehaviour
 
         if (isChasing && distance <= attackRange)
         {
-            animator.SetTrigger("attack");
+            Debug.Log("Enemigo ataca"); // Debug para verificar si entra
+            animator.ResetTrigger("attack"); // Por si quedó colgado
+            animator.SetTrigger("attack");   // Activamos trigger de ataque
         }
 
-        // Logica enemigo
-
+        // Lógica enemigo
         Enemy enemyScript = GetComponent<Enemy>();
         PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
 

@@ -42,7 +42,7 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("¡El jugador ha muerto!");
 
-        GetComponent<PlayerController>().enabled = false;
+        GetComponent<PlayerMovement>().enabled = false;
         GetComponent<CharacterController>().enabled = false;
 
         gameObject.SetActive(false);

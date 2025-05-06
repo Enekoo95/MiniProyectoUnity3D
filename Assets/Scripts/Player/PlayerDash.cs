@@ -14,6 +14,8 @@ public class PlayerDash : MonoBehaviour
 
     private CharacterController controller;
     private bool isDashing = false;
+    public bool IsDashing => isDashing;
+
     private bool canDash = false;
     private float dashDistance = 0f;
     private float lastDashTime = -100f;
@@ -27,11 +29,6 @@ public class PlayerDash : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        if (controller == null)
-        {
-            Debug.LogError("No se encontró un CharacterController en " + gameObject.name);
-        }
-
         defaultLayer = gameObject.layer;
     }
 
@@ -46,7 +43,7 @@ public class PlayerDash : MonoBehaviour
             chargeTime = Mathf.Min(chargeTime, maxDashDuration);
         }
 
-        // Iniciar el dash al soltar el botón
+        // Iniciar dash
         if (canDash && Input.GetKeyUp(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
         {
             isDashing = true;
@@ -55,10 +52,10 @@ public class PlayerDash : MonoBehaviour
             dashDirection = transform.forward.normalized;
             gameObject.layer = LayerMask.NameToLayer("DashingPlayer");
             chargeTime = 0f;
-            fixedYPosition = transform.position.y; // Guardar la posición Y actual
+            fixedYPosition = transform.position.y;
         }
 
-        // Aplicar el dash
+        // Ejecutar dash
         if (isDashing)
         {
             float distanceThisFrame = dashSpeed * Time.deltaTime;
@@ -73,9 +70,9 @@ public class PlayerDash : MonoBehaviour
             }
 
             Vector3 move = dashDirection * distanceThisFrame;
-            move.y = 0;  // Asegurar movimiento horizontal
+            move.y = 0;
             Vector3 targetPosition = transform.position + move;
-            targetPosition.y = fixedYPosition; // Fijar la posición Y
+            targetPosition.y = fixedYPosition;
             controller.Move(targetPosition - transform.position);
 
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, dashDetectionRadius);
@@ -100,6 +97,7 @@ public class PlayerDash : MonoBehaviour
             }
         }
 
+        // Mover objeto recogido (si existe)
         if (carriedObject != null)
         {
             Vector3 objectPosition = transform.position + transform.forward * objectOffset;

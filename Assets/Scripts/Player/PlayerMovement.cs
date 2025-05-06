@@ -1,21 +1,23 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
     public float mouseSensitivity = 2f;
     public Transform cameraTransform;
     public float gravity = 9.81f;
 
-
     private CharacterController controller;
     private Vector3 velocity;
     private float verticalRotation = 0f;
     private bool isDead = false;
+    private PlayerDash playerDash;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        playerDash = GetComponent<PlayerDash>();
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -28,8 +30,12 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
+        // No moverse si se está haciendo dash
+        if (playerDash != null && playerDash.IsDashing) return;
+
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
+
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
         controller.Move(move * speed * Time.deltaTime);
     }
@@ -39,7 +45,7 @@ public class PlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        verticalRotation -= mouseY; // Subtract because mouse movement is inverted
+        verticalRotation -= mouseY;
         verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
 
         cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
@@ -50,35 +56,36 @@ public class PlayerController : MonoBehaviour
     {
         bool isGrounded = controller.isGrounded || Physics.Raycast(transform.position, Vector3.down, controller.height / 2 + 0.1f);
 
-
-
-        // Aplicar gravedad
         if (!controller.isGrounded)
         {
             velocity.y -= gravity * Time.deltaTime;
         }
         else
         {
-            velocity.y = -2f; // Pequeño empuje para mantener contacto con el suelo
+            velocity.y = -2f;
         }
 
         if (velocity.y > 0 && !isGrounded)
         {
-            velocity.y = 0f; // Evita que se acumule velocidad positiva al caer
+            velocity.y = 0f;
         }
 
         controller.Move(velocity * Time.deltaTime);
     }
-    void Die()
+
+    public void Die()
     {
         if (isDead) return;
+
         isDead = true;
         Debug.Log("¡El jugador ha muerto!");
-        GetComponent<PlayerController>().enabled = false;
         GetComponent<CharacterController>().enabled = false;
-        gameObject.SetActive(false);  // Desactivar el objeto 
+        enabled = false;
+
+        gameObject.SetActive(false);
         Invoke("RestartLevel", 2f);
     }
+
     void RestartLevel()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);

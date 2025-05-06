@@ -6,8 +6,8 @@ public class AppearDisappear : MonoBehaviour
     public GameObject objeto;                // Objeto que aparecerá y desaparecerá
     public float tiempoMin = 1.0f;            // Tiempo mínimo entre apariciones
     public float tiempoMax = 3.0f;            // Tiempo máximo entre apariciones
-    public Vector3 areaMin = new Vector3(-10, 10, 0); // Límite inferior del área 
-    public Vector3 areaMax = new Vector3(-40, 10, 20);   // Límite superior del área 
+    public Vector3 areaMin = new Vector3(-10, 15, 0); // Límite inferior del área 
+    public Vector3 areaMax = new Vector3(-40, 15, 20);   // Límite superior del área 
 
     private void Start()
     {

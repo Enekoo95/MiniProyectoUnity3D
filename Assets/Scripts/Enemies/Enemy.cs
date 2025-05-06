@@ -8,18 +8,37 @@ public class Enemy : MonoBehaviour
     private int currentHealth;
     public float health = 50;
     public int damageAmount = 10;
-    public float hitPauseTime = 1f; // Tiempo de pausa después de hacer daño
-    private Animator animator;
+    public float hitPauseTime = 1f;
+    public float attackRange = 5f; // Rango para activar la animación de ataque 
 
-    public bool isPaused = false; // Para controlar si está en pausa
+    private Animator animator;
+    public bool isPaused = false;
+    private Transform player;
 
     void Start()
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+        player = GameObject.FindGameObjectWithTag("Player")?.transform; // Busca al jugador
     }
 
+    void Update()
+    {
+        if (player == null) return;
 
+        // Verificar la distancia al jugador
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        // Si está dentro del rango de ataque, activar la animación de ataque
+        if (distanceToPlayer <= attackRange && !isPaused)
+        {
+            // Activar animación de ataque si está dentro del rango
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            {
+                animator.SetTrigger("attack");
+            }
+        }
+    }
 
     public void TakeDamage(int damage)
     {
@@ -52,15 +71,26 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !isPaused)
+        if (isPaused) return;
+
+        if (other.CompareTag("Player"))
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            PlayerDash playerDash = other.GetComponent<PlayerDash>();
+
+            if (playerDash != null && playerDash.IsDashing)
+            {
+                // No hacer daño si el jugador está dashing
+                Debug.Log("Jugador está dashing, no se aplica daño.");
+                return;
+            }
+
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damageAmount);
                 Debug.Log("El enemigo hizo " + damageAmount + " de daño al jugador.");
 
-                // Añadir un pequeño empuje hacia atrás
+                // Empuje hacia atrás
                 Vector3 knockbackDirection = (other.transform.position - transform.position).normalized;
                 CharacterController playerController = other.GetComponent<CharacterController>();
                 if (playerController != null)
@@ -68,24 +98,17 @@ public class Enemy : MonoBehaviour
                     playerController.Move(knockbackDirection * 0.5f);
                 }
 
-                // Iniciar la pausa después de dar el golpe
                 StartCoroutine(HitPause());
             }
         }
     }
 
-    // Corutina para pausar al enemigo después de golpear
     private IEnumerator HitPause()
     {
         isPaused = true;
         Debug.Log("Enemigo en pausa después del golpe.");
-
-        // Esperar el tiempo de pausa
         yield return new WaitForSeconds(hitPauseTime);
-
         isPaused = false;
         Debug.Log("El enemigo vuelve a perseguir.");
     }
-
-
 }
