@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class PlayerDash : MonoBehaviour
 {
+    [Header("Dash Settings")]
     public float dashSpeed = 15f;
     public float minDashDistance = 2f;
     public float maxDashDistance = 8f;
@@ -12,11 +14,16 @@ public class PlayerDash : MonoBehaviour
     public float maxDashDuration = 1f;
     public int dashDamage = 10;
 
+    [Header("UI")]
+    public Slider dashChargeSlider;
+
     private CharacterController controller;
     private bool isDashing = false;
     public bool IsDashing => isDashing;
 
     private bool canDash = false;
+    private bool hasSwordEquipped = false;
+
     private float dashDistance = 0f;
     private float lastDashTime = -100f;
     private float chargeTime = 0f;
@@ -30,29 +37,56 @@ public class PlayerDash : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         defaultLayer = gameObject.layer;
+
+        if (dashChargeSlider != null)
+        {
+            dashChargeSlider.minValue = 0f;
+            dashChargeSlider.maxValue = maxDashDuration;
+            dashChargeSlider.value = 0f;
+            dashChargeSlider.gameObject.SetActive(false);
+        }
     }
 
     void Update()
     {
         if (controller == null) return;
 
-        // Cargar el dash
-        if (canDash && Input.GetKey(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
+        // Solo permitir cargar y hacer dash si la espada está equipada
+        bool isChargingDash = hasSwordEquipped && canDash && Input.GetKey(KeyCode.Space) && Time.time > lastDashTime + dashCooldown;
+
+        if (isChargingDash)
         {
             chargeTime += Time.deltaTime;
             chargeTime = Mathf.Min(chargeTime, maxDashDuration);
+
+            if (dashChargeSlider != null)
+            {
+                dashChargeSlider.gameObject.SetActive(true);
+                dashChargeSlider.value = chargeTime;
+            }
+        }
+        else if (!isDashing && dashChargeSlider != null && dashChargeSlider.gameObject.activeSelf)
+        {
+            dashChargeSlider.gameObject.SetActive(false);
+            dashChargeSlider.value = 0f;
         }
 
         // Iniciar dash
-        if (canDash && Input.GetKeyUp(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
+        if (hasSwordEquipped && canDash && Input.GetKeyUp(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
         {
             isDashing = true;
             dashDistance = Mathf.Lerp(minDashDistance, maxDashDistance, chargeTime / maxDashDuration);
             lastDashTime = Time.time;
             dashDirection = transform.forward.normalized;
+            fixedYPosition = transform.position.y;
             gameObject.layer = LayerMask.NameToLayer("DashingPlayer");
             chargeTime = 0f;
-            fixedYPosition = transform.position.y;
+
+            if (dashChargeSlider != null)
+            {
+                dashChargeSlider.gameObject.SetActive(false);
+                dashChargeSlider.value = 0f;
+            }
         }
 
         // Ejecutar dash
@@ -106,6 +140,7 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
+    // Llamado por DashItem al recoger la espada
     public void PickUpObject(Transform obj)
     {
         carriedObject = obj;
@@ -113,6 +148,7 @@ public class PlayerDash : MonoBehaviour
         Debug.Log("Objeto recogido y dash habilitado");
     }
 
+    // Activar/desactivar posibilidad de dash
     public void EnableDash(bool enabled)
     {
         canDash = enabled;
@@ -123,5 +159,12 @@ public class PlayerDash : MonoBehaviour
         }
 
         Debug.Log("Dash " + (enabled ? "habilitado" : "deshabilitado"));
+    }
+
+    // Llamado por otro script o DashItem para equipar la espada
+    public void SetSwordEquipped(bool equipped)
+    {
+        hasSwordEquipped = equipped;
+        Debug.Log("Espada " + (equipped ? "equipada" : "desequipada"));
     }
 }

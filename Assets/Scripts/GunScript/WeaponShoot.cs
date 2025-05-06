@@ -43,7 +43,8 @@ public class Gun : MonoBehaviour
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.velocity = firePoint.forward * bulletSpeed;
+            // Aplicar una fuerza de impulso en la dirección hacia adelante
+            rb.AddForce(firePoint.forward * bulletSpeed, ForceMode.Impulse);
         }
 
         // Reducir el conteo de balas

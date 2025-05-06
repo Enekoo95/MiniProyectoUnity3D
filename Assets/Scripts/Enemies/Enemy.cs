@@ -3,13 +3,20 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Salud y Daño")]
     public int maxHealth = 3;
     public int dashesToKill = 3;
     private int currentHealth;
     public float health = 50;
     public int damageAmount = 10;
+
+    [Header("Ataque")]
     public float hitPauseTime = 1f;
-    public float attackRange = 5f; // Rango para activar la animación de ataque 
+    public float attackRange = 5f;
+
+    [Header("Detección de Suelo")]
+    public float groundCheckDistance = 2f;
+    public LayerMask groundLayer;
 
     private Animator animator;
     public bool isPaused = false;
@@ -19,24 +26,29 @@ public class Enemy : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player")?.transform; // Busca al jugador
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
     void Update()
     {
         if (player == null) return;
 
-        // Verificar la distancia al jugador
+        // Verificar la distancia al jugador para atacar
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Si está dentro del rango de ataque, activar la animación de ataque
         if (distanceToPlayer <= attackRange && !isPaused)
         {
-            // Activar animación de ataque si está dentro del rango
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
             {
                 animator.SetTrigger("attack");
             }
+        }
+
+        // Verificar si hay suelo debajo con un Raycast
+        Ray ray = new Ray(transform.position, Vector3.down);
+        if (!Physics.Raycast(ray, groundCheckDistance, groundLayer))
+        {
+            Debug.Log("Enemigo sin suelo. Eliminado.");
+            Die();
         }
     }
 
@@ -80,7 +92,6 @@ public class Enemy : MonoBehaviour
 
             if (playerDash != null && playerDash.IsDashing)
             {
-                // No hacer daño si el jugador está dashing
                 Debug.Log("Jugador está dashing, no se aplica daño.");
                 return;
             }

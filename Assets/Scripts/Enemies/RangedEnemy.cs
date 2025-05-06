@@ -72,7 +72,7 @@ public class RangedEnemy : MonoBehaviour
         {
             rb.useGravity = true;
 
-            float adjustedForce = shootForce * 1.2f; // Puedes subir esto si se queda corto
+            float adjustedForce = shootForce * 1.2f;
             rb.AddForce(launchDirection * adjustedForce, ForceMode.Impulse);
         }
         else
