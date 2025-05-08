@@ -131,7 +131,7 @@ public class PlayerDash : MonoBehaviour
             }
         }
 
-        // Mover objeto recogido (si existe)
+        // Mover objeto recogido 
         if (carriedObject != null)
         {
             Vector3 objectPosition = transform.position + transform.forward * objectOffset;
@@ -140,7 +140,7 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
-    // Llamado por DashItem al recoger la espada
+    // Recoger la espada
     public void PickUpObject(Transform obj)
     {
         carriedObject = obj;
@@ -161,7 +161,7 @@ public class PlayerDash : MonoBehaviour
         Debug.Log("Dash " + (enabled ? "habilitado" : "deshabilitado"));
     }
 
-    // Llamado por otro script o DashItem para equipar la espada
+    // Llamado por DashItem para equipar la espada
     public void SetSwordEquipped(bool equipped)
     {
         hasSwordEquipped = equipped;
