@@ -14,14 +14,6 @@ public class WaterImpact : MonoBehaviour
             Vector3 impactPosition = other.transform.position;
             waterMaterial.SetVector("_ImpactPosition", new Vector4(impactPosition.x, impactPosition.y, impactPosition.z, impactStrength));
 
-            // Espera un frame antes de destruir al jugador para que el shader tenga tiempo de reaccionar
-            StartCoroutine(DestroyPlayer(other.gameObject));
         }
-    }
-
-    IEnumerator DestroyPlayer(GameObject player)
-    {
-        yield return new WaitForEndOfFrame();
-        Destroy(player);
     }
 }
