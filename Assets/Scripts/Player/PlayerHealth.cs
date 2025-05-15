@@ -6,13 +6,18 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth = 50;
     public int currentHealth;
 
-    // Array de corazones
     public GameObject[] hearts;
+
+    private PlayerRespawn playerRespawn;
 
     void Start()
     {
         currentHealth = maxHealth;
         UpdateHearts();
+
+        playerRespawn = GetComponent<PlayerRespawn>();
+        if (playerRespawn == null)
+            Debug.LogError("PlayerRespawn no encontrado en el jugador.");
     }
 
     public void TakeDamage(int damage)
@@ -42,28 +47,35 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("¡El jugador ha muerto!");
 
-        GetComponent<PlayerMovement>().enabled = false;
-        GetComponent<CharacterController>().enabled = false;
-
-        gameObject.SetActive(false);
-
-        Invoke("RestartLevel", 2f);
-    }
-
-    void RestartLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // En vez de desactivar el jugador, llamar respawn
+        if (playerRespawn != null)
+        {
+            playerRespawn.OnDeath();
+        }
+        else
+        {
+            Debug.LogError("No se encontró PlayerRespawn, recargando escena...");
+            // Por seguridad recarga la escena si no encuentra PlayerRespawn
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public void Heal(int amount)
     {
         currentHealth += amount;
 
-        // Limitar la salud al máximo
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
 
         Debug.Log("El jugador ha sanado " + amount + " puntos de vida. Vida actual: " + currentHealth);
         UpdateHearts();
     }
+
+    // Método para restaurar la salud al respawnear
+    public void RestoreHealth()
+    {
+        currentHealth = maxHealth;
+        UpdateHearts();
+    }
 }
+

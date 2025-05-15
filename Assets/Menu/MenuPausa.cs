@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuPausa : MonoBehaviour
 {
-    public GameObject menuPausaUI;  // Asigna el panel del menú de pausa en el inspector
+    public GameObject menuPausaUI;
     private bool juegoPausado = false;
 
     void Update()
@@ -10,37 +11,45 @@ public class MenuPausa : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (juegoPausado)
-            {
                 Reanudar();
-            }
             else
-            {
                 Pausar();
-            }
         }
     }
 
     public void Reanudar()
     {
         menuPausaUI.SetActive(false);
-        Time.timeScale = 1f;  // Reanuda el tiempo
+        Time.timeScale = 1f;
         juegoPausado = false;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Pausar()
     {
         menuPausaUI.SetActive(true);
-        Time.timeScale = 0f;  // Pausa el tiempo
+        Time.timeScale = 0f;
         juegoPausado = true;
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
-    public void VolverAlMenu()
+    public void IrOpciones()
     {
-        Time.timeScale = 1f;  // Asegúrate de reanudar antes de cambiar de escena
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MenuPrincipal");
+        Time.timeScale = 1f;  // reanuda tiempo antes de cambiar escena
+        SceneManager.LoadScene("OptionsScene");  // Cambia el nombre por el de tu escena opciones
     }
 
-    public void SalirDelJuego()
+    public void VolverMenu()
+    {
+        Time.timeScale = 1f;  // reanuda tiempo antes de cambiar escena
+        SceneManager.LoadScene("MenuScene");  // Cambia por el nombre de tu escena menú principal
+    }
+
+    public void SalirJuego()
     {
         Application.Quit();
         Debug.Log("Saliendo del juego...");

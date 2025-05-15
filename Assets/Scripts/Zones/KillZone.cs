@@ -6,23 +6,19 @@ public class KillZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Llamar al método OnDeath para que el jugador respawnee
             PlayerRespawn respawn = other.GetComponent<PlayerRespawn>();
             if (respawn != null)
             {
                 respawn.OnDeath();
             }
 
-            // Opcional: Destruir el jugador
-            Destroy(other.gameObject);
-
-            Debug.Log("¡Jugador ha caído en la piscina y ha muerto!");
+            Debug.Log("¡Jugador entró en la KillZone!");
         }
 
         if (other.CompareTag("Enemy"))
         {
             Destroy(other.gameObject);
-            Debug.Log("¡Enemigo ha caído en la piscina y ha muerto!");
+            Debug.Log("¡Enemigo destruido por la KillZone!");
         }
     }
 }

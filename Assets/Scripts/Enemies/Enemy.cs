@@ -33,7 +33,6 @@ public class Enemy : MonoBehaviour
     {
         if (player == null) return;
 
-        // Verificar la distancia al jugador para atacar
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if (distanceToPlayer <= attackRange && !isPaused)
         {
@@ -43,7 +42,6 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // Verificar si hay suelo debajo con un Raycast
         Ray ray = new Ray(transform.position, Vector3.down);
         if (!Physics.Raycast(ray, groundCheckDistance, groundLayer))
         {
@@ -101,7 +99,6 @@ public class Enemy : MonoBehaviour
                 playerHealth.TakeDamage(damageAmount);
                 Debug.Log("El enemigo hizo " + damageAmount + " de daño al jugador.");
 
-                // Empuje hacia atrás
                 Vector3 knockbackDirection = (other.transform.position - transform.position).normalized;
                 CharacterController playerController = other.GetComponent<CharacterController>();
                 if (playerController != null)
@@ -121,5 +118,14 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(hitPauseTime);
         isPaused = false;
         Debug.Log("El enemigo vuelve a perseguir.");
+    }
+
+    // Método para reiniciar la pausa y corutinas
+    public void ResetPause()
+    {
+        isPaused = false;
+        StopAllCoroutines();
+        animator.ResetTrigger("attack");
+        Debug.Log("Enemigo pausa reiniciada.");
     }
 }
