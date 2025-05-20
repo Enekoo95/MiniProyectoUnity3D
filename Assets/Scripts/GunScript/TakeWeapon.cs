@@ -34,7 +34,7 @@ public class TakeWeapon : MonoBehaviour
             }
 
             // Equipar el arma llamando al script Gun
-            Gun gun = GetComponent<Gun>();
+            WeaponShoot gun = GetComponent<WeaponShoot>();
             if (gun != null)
             {
                 gun.EquipWeapon();

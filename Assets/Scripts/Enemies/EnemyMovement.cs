@@ -1,52 +1,51 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class EnemyMovement : MonoBehaviour
 {
     public Transform player;
-    public float speed = 30f;
-    public float detectionRange = 100000f;
+    public float speed = 5f;
+    public float detectionRange = 30f;
     public float visionAngle = 60f;
     public LayerMask obstacleMask;
-
-    public float attackRange = 1f;
+    public LayerMask groundLayer;
+    public float attackRange = 2f;
 
     private bool isChasing = false;
     private Animator animator;
+    private CharacterController controller;
+
+    // Gravedad
+    private float verticalVelocity = 0f;
+    public float gravity = -20f;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        controller = GetComponent<CharacterController>();
+
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
+        }
     }
 
     void Update()
     {
         animator.SetBool("isChasing", isChasing);
-
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
-
         if (isChasing && distance <= attackRange)
         {
-            Debug.Log("Enemigo ataca"); // Debug para verificar si entra
-            animator.ResetTrigger("attack"); // Por si quedó colgado
-            animator.SetTrigger("attack");   // Activamos trigger de ataque
+            animator.ResetTrigger("attack");
+            animator.SetTrigger("attack");
         }
 
-        // Lógica enemigo
         Enemy enemyScript = GetComponent<Enemy>();
-        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
-
-        if (enemyScript != null && enemyScript.enabled && enemyScript.isPaused)
-        {
-            return;
-        }
-
-        if (playerHealth != null && playerHealth.currentHealth <= 0)
-        {
-            isChasing = false;
-            return;
-        }
+        if (enemyScript != null && enemyScript.isPaused) return;
 
         if (!isChasing && CanSeePlayer())
         {
@@ -54,9 +53,15 @@ public class EnemyMovement : MonoBehaviour
             Debug.Log("¡Enemigo detectó al jugador! Iniciando persecución.");
         }
 
+        ApplyGravity();
+
         if (isChasing)
         {
             ChasePlayer();
+        }
+        else
+        {
+            controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
         }
     }
 
@@ -67,12 +72,30 @@ public class EnemyMovement : MonoBehaviour
         Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0;
 
-        transform.position += direction * speed * Time.deltaTime;
+        Vector3 movement = direction * speed;
+        movement.y = verticalVelocity;
+
+        controller.Move(movement * Time.deltaTime);
 
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+    }
+
+    void ApplyGravity()
+    {
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, 0.3f, groundLayer);
+
+        if (isGrounded && verticalVelocity < 0)
+        {
+            verticalVelocity = -2f;
+        }
+        else
+        {
+            verticalVelocity += gravity * Time.deltaTime;
         }
     }
 
@@ -86,7 +109,8 @@ public class EnemyMovement : MonoBehaviour
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
         if (angleToPlayer > visionAngle / 2f) return false;
 
-        if (Physics.Raycast(transform.position, directionToPlayer.normalized, out RaycastHit hit, detectionRange, obstacleMask))
+        Vector3 origin = transform.position + Vector3.up * 1f; // punto de vista del enemigo
+        if (Physics.Raycast(origin, directionToPlayer.normalized, out RaycastHit hit, detectionRange, obstacleMask))
         {
             if (!hit.collider.CompareTag("Player"))
                 return false;

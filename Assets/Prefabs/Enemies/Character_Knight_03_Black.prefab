@@ -2111,6 +2111,7 @@ GameObject:
   - component: {fileID: 8368682294370496550}
   - component: {fileID: 592278072852307541}
   - component: {fileID: 3839349264774499952}
+  - component: {fileID: 211322913136512171}
   m_Layer: 0
   m_Name: Character_Knight_03_Black
   m_TagString: Untagged
@@ -2267,6 +2268,11 @@ MonoBehaviour:
   health: 50
   damageAmount: 10
   hitPauseTime: 1
+  attackRange: 5
+  groundCheckDistance: 2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   isPaused: 0
 --- !u!114 &3839349264774499952
 MonoBehaviour:
@@ -2287,8 +2293,37 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   attackRange: 2
-  attackCooldown: 1.5
+  gravity: -20
+--- !u!143 &211322913136512171
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171874}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &173620
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Gun : MonoBehaviour
+public class WeaponShoot : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform firePoint;
@@ -61,5 +61,11 @@ public class Gun : MonoBehaviour
     {
         isEquipped = true;
         Debug.Log("¡Arma equipada!");
+    }
+
+    public void RefillAmmo(int amount)
+    {
+        totalAmmo += amount;
+        Debug.Log("Munición recargada. Total actual: " + totalAmmo);
     }
 }
