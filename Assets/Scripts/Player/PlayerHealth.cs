@@ -47,7 +47,6 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("¡El jugador ha muerto!");
 
-        // En vez de desactivar el jugador, llamar respawn
         if (playerRespawn != null)
         {
             playerRespawn.OnDeath();
@@ -55,7 +54,6 @@ public class PlayerHealth : MonoBehaviour
         else
         {
             Debug.LogError("No se encontró PlayerRespawn, recargando escena...");
-            // Por seguridad recarga la escena si no encuentra PlayerRespawn
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
@@ -71,11 +69,9 @@ public class PlayerHealth : MonoBehaviour
         UpdateHearts();
     }
 
-    // Método para restaurar la salud al respawnear
     public void RestoreHealth()
     {
         currentHealth = maxHealth;
         UpdateHearts();
     }
 }
-

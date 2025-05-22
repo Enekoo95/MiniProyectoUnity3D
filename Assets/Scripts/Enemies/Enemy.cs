@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     private int currentHealth;
     public float health = 50;
     public int damageAmount = 10;
+    public GameObject wall1;
 
     [Header("Ataque")]
     public float hitPauseTime = 1f;
@@ -75,6 +76,11 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        if (wall1 != null) //Destruye la pared
+        {
+            Destroy(wall1);
+            Debug.Log("¡Pared destruida al recoger la llave!");
+        }
         Debug.Log("Enemigo eliminado");
         Destroy(gameObject);
     }

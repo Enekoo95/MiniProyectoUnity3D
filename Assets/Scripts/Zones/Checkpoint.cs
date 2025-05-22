@@ -24,7 +24,7 @@ public class Checkpoint : MonoBehaviour
             PlayerRespawn respawn = other.GetComponent<PlayerRespawn>();
             if (respawn != null)
             {
-                respawn.SetCheckpointPosition(transform.position);
+                respawn.SetCheckpointPosition(transform.position, transform.rotation);
                 ActivateCheckpoint();
             }
         }
