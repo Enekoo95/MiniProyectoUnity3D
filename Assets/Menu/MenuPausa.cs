@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class MenuPausa : MonoBehaviour
 {
     public GameObject menuPausaUI;
+    public PlayerMovement playerMovementScript; 
     private bool juegoPausado = false;
 
     void Update()
@@ -23,6 +24,9 @@ public class MenuPausa : MonoBehaviour
         Time.timeScale = 1f;
         juegoPausado = false;
 
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = true;
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -32,6 +36,9 @@ public class MenuPausa : MonoBehaviour
         menuPausaUI.SetActive(true);
         Time.timeScale = 0f;
         juegoPausado = true;
+
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = false;
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
