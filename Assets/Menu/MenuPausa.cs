@@ -4,17 +4,34 @@ using UnityEngine.SceneManagement;
 public class MenuPausa : MonoBehaviour
 {
     public GameObject menuPausaUI;
-    public PlayerMovement playerMovementScript; 
+    public GameObject panelControlesUI;
+    public PlayerMovement playerMovementScript;
+
     private bool juegoPausado = false;
+
+    void Start()
+    {
+        // Al iniciar, aseguramos que el panel de controles está oculto
+        if (panelControlesUI != null)
+            panelControlesUI.SetActive(false);
+    }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (juegoPausado)
-                Reanudar();
+            if (panelControlesUI.activeSelf)
+            {
+                // Si está en el panel de controles, volver al menú de pausa
+                VolverDeControles();
+            }
             else
-                Pausar();
+            {
+                if (juegoPausado)
+                    Reanudar();
+                else
+                    Pausar();
+            }
         }
     }
 
@@ -44,16 +61,22 @@ public class MenuPausa : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void IrOpciones()
+    public void MostrarControles()
     {
-        Time.timeScale = 1f;  // reanuda tiempo antes de cambiar escena
-        SceneManager.LoadScene("OptionsScene");  // Cambia el nombre por el de tu escena opciones
+        menuPausaUI.SetActive(false);
+        panelControlesUI.SetActive(true);
+    }
+
+    public void VolverDeControles()
+    {
+        panelControlesUI.SetActive(false);
+        menuPausaUI.SetActive(true);
     }
 
     public void VolverMenu()
     {
-        Time.timeScale = 1f;  // reanuda tiempo antes de cambiar escena
-        SceneManager.LoadScene("MenuScene");  // Cambia por el nombre de tu escena menú principal
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void SalirJuego()

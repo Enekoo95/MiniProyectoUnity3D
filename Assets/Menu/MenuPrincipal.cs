@@ -3,9 +3,19 @@ using UnityEngine.SceneManagement;
 
 public class MenuPrincipal : MonoBehaviour
 {
+    public GameObject panelMenuPrincipal;
+    public GameObject panelControles;
+
+    private void Start()
+    {
+        // Only panel of main menu
+        panelMenuPrincipal.SetActive(true);
+        panelControles.SetActive(false);
+    }
+
     public void Jugar()
     {
-        SceneManager.LoadScene("Scene0"); // Reemplaza con el nombre real
+        SceneManager.LoadScene("Scene0"); // Game
     }
 
     public void Salir()
@@ -14,8 +24,15 @@ public class MenuPrincipal : MonoBehaviour
         Debug.Log("Saliendo del juego...");
     }
 
-    public void Opciones()
+    public void Controles()
     {
-        Debug.Log("Menú de opciones aún no implementado.");
+        panelMenuPrincipal.SetActive(false);
+        panelControles.SetActive(true);
+    }
+
+    public void VolverAlMenu()
+    {
+        panelControles.SetActive(false);
+        panelMenuPrincipal.SetActive(true);
     }
 }
