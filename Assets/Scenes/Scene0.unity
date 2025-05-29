@@ -3210,6 +3210,7 @@ MonoBehaviour:
   menuPausaUI: {fileID: 2039316422}
   panelControlesUI: {fileID: 718550056}
   playerMovementScript: {fileID: 1924581701}
+  espadaRigidbody: {fileID: 1743589817}
 --- !u!4 &126610746
 Transform:
   m_ObjectHideFlags: 0
@@ -4703,7 +4704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -30.940018
+      value: 64.1
       objectReference: {fileID: 0}
     - target: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4711,7 +4712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.4000053
+      value: 59.8
       objectReference: {fileID: 0}
     - target: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4751,8 +4752,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 287079541379485091, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_Constraints
-      value: 64
+      value: 126
       objectReference: {fileID: 0}
+    - target: {fileID: 287079541379485091, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1143876114188267939, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
+      propertyPath: dashPosition
+      value: 
+      objectReference: {fileID: 495434314}
     - target: {fileID: 6428089326986712552, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
       propertyPath: m_Size.x
       value: 0.29512596
@@ -52571,6 +52580,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
   m_PrefabInstance: {fileID: 183974736}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &1743589817 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 287079541379485091, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
+  m_PrefabInstance: {fileID: 183974736}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1747041993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58192,7 +58206,7 @@ Transform:
   m_GameObject: {fileID: 1924581693}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.007319268, z: -0, w: -0.99997324}
-  m_LocalPosition: {x: -114.4, y: 1.09, z: -1.7}
+  m_LocalPosition: {x: -19.359985, y: 1.09, z: 60.500004}
   m_LocalScale: {x: 0.4, y: 2, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children:
