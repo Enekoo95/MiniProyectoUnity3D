@@ -3210,7 +3210,6 @@ MonoBehaviour:
   menuPausaUI: {fileID: 2039316422}
   panelControlesUI: {fileID: 718550056}
   playerMovementScript: {fileID: 1924581701}
-  espadaRigidbody: {fileID: 1743589817}
 --- !u!4 &126610746
 Transform:
   m_ObjectHideFlags: 0
@@ -52580,11 +52579,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 436332, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
   m_PrefabInstance: {fileID: 183974736}
   m_PrefabAsset: {fileID: 0}
---- !u!54 &1743589817 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 287079541379485091, guid: 47acc5b26852c45438ce84bf1364dea1, type: 3}
-  m_PrefabInstance: {fileID: 183974736}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1747041993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58332,7 +58326,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1924581693}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c50d08d9037796d4bbbd5b307771dbbf, type: 3}
   m_Name: 

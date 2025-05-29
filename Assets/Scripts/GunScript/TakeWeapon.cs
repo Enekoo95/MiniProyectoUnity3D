@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class TakeWeapon : MonoBehaviour
 {
-    public Transform weaponPosition; // Posición del arma en el jugador
-    public GameObject crosshairUI;   // Imagen de la mira en el HUD
-    public Transform playerCamera;   // Cámara del jugador
-
+    public Transform weaponPosition;
+    public GameObject crosshairUI;
+    public Transform playerCamera;
 
     private bool isEquipped = false;
 
@@ -13,17 +12,13 @@ public class TakeWeapon : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("¡Has recogido la pistola!");
+            Debug.Log("¡Has recogido el arma!");
 
-            // Hacer que la pistola sea hija del jugador y se coloque en la posición correcta
             transform.SetParent(weaponPosition);
             transform.localPosition = new Vector3(0, 0.05f, 0.15f);
             transform.localRotation = Quaternion.Euler(0, 0, 0);
-
-            // Desactivar el collider para que no vuelva a recogerse
             GetComponent<Collider>().enabled = false;
 
-            // Activar la mira en el HUD
             if (crosshairUI != null)
             {
                 crosshairUI.SetActive(true);
@@ -33,22 +28,21 @@ public class TakeWeapon : MonoBehaviour
                 Debug.LogWarning("No se ha asignado la mira en el inspector.");
             }
 
-            // Equipar el arma llamando al script Gun
             WeaponShoot gun = GetComponent<WeaponShoot>();
             if (gun != null)
             {
                 gun.EquipWeapon();
-                isEquipped = true; // Marcar el arma como equipada
+                isEquipped = true;
             }
             else
             {
-                Debug.LogWarning("No se encontró el script 'Gun' en el objeto del arma.");
+                Debug.LogWarning("No se encontró el script 'WeaponShoot' en el objeto del arma.");
             }
 
-            // Equipar el arma llamando al script WeaponSwitcher
             WeaponSwitcher weaponSwitcher = other.GetComponent<WeaponSwitcher>();
             if (weaponSwitcher != null)
             {
+                weaponSwitcher.enabled = true; // ACTIVAMOS el script
                 weaponSwitcher.PickUpWeapon(gameObject);
                 isEquipped = true;
                 gameObject.SetActive(false);
@@ -57,13 +51,13 @@ public class TakeWeapon : MonoBehaviour
             {
                 Debug.LogWarning("El jugador no tiene el componente WeaponSwitcher.");
             }
+
             Debug.Log("Arma recogida: " + gameObject.name);
         }
     }
 
     void Update()
     {
-        // Si el arma está equipada, seguir la rotación de la cámara
         if (isEquipped && playerCamera != null)
         {
             transform.rotation = playerCamera.rotation;
