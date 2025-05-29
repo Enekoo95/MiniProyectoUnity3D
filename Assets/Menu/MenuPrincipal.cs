@@ -5,17 +5,23 @@ public class MenuPrincipal : MonoBehaviour
 {
     public GameObject panelMenuPrincipal;
     public GameObject panelControles;
+    public AudioSource musicaFondo;
 
     private void Start()
     {
-        // Only panel of main menu
         panelMenuPrincipal.SetActive(true);
         panelControles.SetActive(false);
+
+        if (musicaFondo != null && !musicaFondo.isPlaying)
+        {
+            musicaFondo.loop = true;
+            musicaFondo.Play();
+        }
     }
 
     public void Jugar()
     {
-        SceneManager.LoadScene("Scene0"); // Game
+        SceneManager.LoadScene("Scene0");
     }
 
     public void Salir()

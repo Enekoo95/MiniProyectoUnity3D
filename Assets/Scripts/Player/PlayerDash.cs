@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(AudioSource))]
 public class PlayerDash : MonoBehaviour
 {
     [Header("Dash Settings")]
@@ -17,6 +19,10 @@ public class PlayerDash : MonoBehaviour
     [Header("UI")]
     public Slider dashChargeSlider;
 
+    [Header("Audio")]
+    public AudioClip dashSound;
+
+    private AudioSource audioSource;
     private CharacterController controller;
     private bool isDashing = false;
     public bool IsDashing => isDashing;
@@ -36,6 +42,7 @@ public class PlayerDash : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
         defaultLayer = gameObject.layer;
 
         if (dashChargeSlider != null)
@@ -51,7 +58,6 @@ public class PlayerDash : MonoBehaviour
     {
         if (controller == null) return;
 
-        // Solo permitir cargar y hacer dash si la espada está equipada
         bool isChargingDash = hasSwordEquipped && canDash && Input.GetKey(KeyCode.Space) && Time.time > lastDashTime + dashCooldown;
 
         if (isChargingDash)
@@ -71,7 +77,6 @@ public class PlayerDash : MonoBehaviour
             dashChargeSlider.value = 0f;
         }
 
-        // Iniciar dash
         if (hasSwordEquipped && canDash && Input.GetKeyUp(KeyCode.Space) && Time.time > lastDashTime + dashCooldown)
         {
             isDashing = true;
@@ -87,9 +92,14 @@ public class PlayerDash : MonoBehaviour
                 dashChargeSlider.gameObject.SetActive(false);
                 dashChargeSlider.value = 0f;
             }
+
+            // Reproducir sonido de dash
+            if (dashSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(dashSound);
+            }
         }
 
-        // Ejecutar dash
         if (isDashing)
         {
             float distanceThisFrame = dashSpeed * Time.deltaTime;
@@ -131,7 +141,6 @@ public class PlayerDash : MonoBehaviour
             }
         }
 
-        // Mover objeto recogido 
         if (carriedObject != null)
         {
             Vector3 objectPosition = transform.position + transform.forward * objectOffset;
@@ -140,7 +149,6 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
-    // Recoger la espada
     public void PickUpObject(Transform obj)
     {
         carriedObject = obj;
@@ -148,7 +156,6 @@ public class PlayerDash : MonoBehaviour
         Debug.Log("Objeto recogido y dash habilitado");
     }
 
-    // Activar/desactivar posibilidad de dash
     public void EnableDash(bool enabled)
     {
         canDash = enabled;
@@ -161,7 +168,6 @@ public class PlayerDash : MonoBehaviour
         Debug.Log("Dash " + (enabled ? "habilitado" : "deshabilitado"));
     }
 
-    // Llamado por DashItem para equipar la espada
     public void SetSwordEquipped(bool equipped)
     {
         hasSwordEquipped = equipped;

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class EnemyMovement : MonoBehaviour
 {
     public Transform player;
@@ -11,11 +10,16 @@ public class EnemyMovement : MonoBehaviour
     public LayerMask groundLayer;
     public float attackRange = 2f;
 
+    [Header("Audio")]
+    public AudioClip spottedSound;
+
     private bool isChasing = false;
+    private bool hasPlayedSpottedSound = false;
+
     private Animator animator;
     private CharacterController controller;
+    private AudioSource audioSource;
 
-    // Gravedad
     private float verticalVelocity = 0f;
     public float gravity = -20f;
 
@@ -23,6 +27,7 @@ public class EnemyMovement : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
 
         if (player == null)
         {
@@ -51,6 +56,12 @@ public class EnemyMovement : MonoBehaviour
         {
             isChasing = true;
             Debug.Log("¡Enemigo detectó al jugador! Iniciando persecución.");
+
+            if (!hasPlayedSpottedSound && spottedSound != null)
+            {
+                audioSource.PlayOneShot(spottedSound);
+                hasPlayedSpottedSound = true;
+            }
         }
 
         ApplyGravity();
@@ -109,7 +120,7 @@ public class EnemyMovement : MonoBehaviour
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
         if (angleToPlayer > visionAngle / 2f) return false;
 
-        Vector3 origin = transform.position + Vector3.up * 1f; // punto de vista del enemigo
+        Vector3 origin = transform.position + Vector3.up * 1f;
         if (Physics.Raycast(origin, directionToPlayer.normalized, out RaycastHit hit, detectionRange, obstacleMask))
         {
             if (!hit.collider.CompareTag("Player"))

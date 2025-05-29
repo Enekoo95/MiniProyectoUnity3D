@@ -131,6 +131,8 @@ MonoBehaviour:
   fireRate: 0.5
   totalAmmo: 10
   isEquipped: 0
+  shootSound: {fileID: 0}
+  emptyAmmoSound: {fileID: 0}
 --- !u!114 &5261177825489942289
 MonoBehaviour:
   m_ObjectHideFlags: 0
