@@ -6,14 +6,22 @@ public class MenuPausa : MonoBehaviour
     public GameObject menuPausaUI;
     public GameObject panelControlesUI;
     public PlayerMovement playerMovementScript;
+    public AudioSource musicaMenuPausa;  // Referencia al AudioSource para la música
 
     private bool juegoPausado = false;
 
     void Start()
     {
-        // Al iniciar, aseguramos que el panel de controles está oculto
+        // Aseguramos que el panel de controles está oculto al inicio
         if (panelControlesUI != null)
             panelControlesUI.SetActive(false);
+
+        // Nos aseguramos de que la música esté detenida al inicio
+        if (musicaMenuPausa != null)
+        {
+            musicaMenuPausa.loop = true;       // Que la música se repita mientras esté el menú
+            musicaMenuPausa.Stop();            // No reproducirla al principio
+        }
     }
 
     void Update()
@@ -22,7 +30,6 @@ public class MenuPausa : MonoBehaviour
         {
             if (panelControlesUI.activeSelf)
             {
-                // Si está en el panel de controles, volver al menú de pausa
                 VolverDeControles();
             }
             else
@@ -44,6 +51,9 @@ public class MenuPausa : MonoBehaviour
         if (playerMovementScript != null)
             playerMovementScript.enabled = true;
 
+        if (musicaMenuPausa != null && musicaMenuPausa.isPlaying)
+            musicaMenuPausa.Stop();
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -56,6 +66,9 @@ public class MenuPausa : MonoBehaviour
 
         if (playerMovementScript != null)
             playerMovementScript.enabled = false;
+
+        if (musicaMenuPausa != null && !musicaMenuPausa.isPlaying)
+            musicaMenuPausa.Play();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
